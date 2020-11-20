@@ -1,13 +1,16 @@
 import re
 from pathlib import Path
+from . import eqandvar
 
 # def variablename(var):
     # return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
 
 def getVandEfromFile(file):
     strToConv = Path(file).read_text()
-    varDict, eqtDict = getVandEfromLocal(strToConv)
-    return [varDict, eqtDict]
+    varPro, eqtPro = getVandEfromLocal(strToConv)
+
+    # varPro, eqtPro = processVandEtoveDict(varDict, eqtDict)
+    return [varPro, eqtPro]
 
 def getVandEfromLocal(strIn):
     varDict = stringToDict(strIn, 'Var')
@@ -19,10 +22,10 @@ def stringToDict(strIn, typeSeek):
     strIn, numComsRemoved = re.subn('\s*#.*\n', '\n', strIn) # remove all comments
     namePat = re.compile('new'+typeSeek+'\s*{\s*(\w*)\s*}\s*{\s*') #patter for find variable or equation names
     names = namePat.finditer(strIn) #get an iterator of all match objects for the above pattern
-    newDict = {}
+    newDict = eqandvar.evDict()
     subNamePat = re.compile('\s*(\w+)\s*=\s*\{') #pattern for var or eqt parameter names
     for i in names:
-        newDict[i.group(1)] = {} # add a dictionary entry for this var or eq
+        preprocessDict = {'name':i.group(1)}
         startLoc = i.end(0) # get the endlocation of the var or eq beginning 
         endLoc = startLoc+findBalanced(strIn[startLoc:],'{', '}')
         curLoc = startLoc
@@ -31,10 +34,15 @@ def stringToDict(strIn, typeSeek):
             subNameMatch = subNamePat.search(strCur)
             subNameVal = subNameMatch.end(0) #curLoc+len(subNameMatch.group(0))
             subNameValEnd = subNameVal+findBalanced(strCur[subNameVal:],'{','}')
-            newDict[i.group(1)][subNameMatch.group(1)] = strCur[subNameVal:subNameValEnd]
+            preprocessDict[subNameMatch.group(1)] = strCur[subNameVal:subNameValEnd]
             curLoc = subNameValEnd
             strCur = strCur[curLoc:]
-    
+
+        if typeSeek == 'Var':
+            newDict[i.group(1)] = eqandvar.varClass(preprocessDict) # add a dictionary entry for this var or eq
+        elif typeSeek == 'Eq':
+            newDict[i.group(1)] = eqandvar.eqtClass(preprocessDict) # add a dictionary entry for this var or eq
+
     return newDict
 
 def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and bC
