@@ -25,6 +25,7 @@ class eqtClass:
         self.symbsExp = ''
         self.lambd = ''
         self.tex = ''
+        self.texExp = ''
 
     def process(self, dfp):
         self.display = dfp.get('display')
@@ -40,31 +41,6 @@ class eqtClass:
         if not self.lambdOpts:
             self.glsType = 'numpy'
 
-    def expandAll(self, eqDict, varDict):
-        self.eqtExp = self.equationExpand(eqDict)
-        self.symbsExp = self.eqtExp.free_symbols
-        self.lambd = lambdify(self.symbsExp, self.eqtExp, self.lambdOpts)
-        self.tex = latexGlsSub(self, eqDict, varDict)
-
-    def equationExpand(self, eqDict):
-        pass
-
-    def latexGlsSub(self, eqDict, varDict):
-        pass
-
-    def getExpr(self, eqt, symsDict):
-        splitEqt = re.split(r'(\w*)', eqt)
-        symsList = []
-        for idx, item in enumerate(splitEqt):
-            if item in symsDict.dict:
-                symsList.append(symsDict.dict[item].var)
-                splitEqt[idx] = 'Symbol(r\''+str(symsDict.dict[item].var)+'\')'
-
-        exprStr = ''.join(splitEqt)
-        expression = parExp(exprStr)
-        texExpr = latex(expression)
-        lambdaExpr = lambdify(symsList, expression, 'numpy')
-        return [expression, texExpr, lambdaExpr, symsList]
 
 class varClass:
     def __init__(self, dictForProcess):
@@ -78,13 +54,15 @@ class varClass:
     def process(self, dfp):
         self.var = symbols(dfp.get('name'))
         self.display = dfp.get('display')
-        self.val = dfp.get('value')
+        self.val = float(dfp.get('value'))
         self.units = dfp.get('units')
         self.glsType = dfp.get('glsType')
         self.description = dfp.get('description')
-        self.ensureMath = dfp.get('ensureMath').lower() == 'true'
+        self.ensureMath = dfp.get('ensureMath')
 
-        if not self.ensureMath:
+        if self.ensureMath:
+            self.ensureMath = self.ensureMath.lower() == 'true'
+        else:
             self.ensureMath = True
         
         if not self.glsType:
