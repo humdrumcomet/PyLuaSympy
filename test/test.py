@@ -1,4 +1,4 @@
-import luatexSympy.helpers as lsh
+import pyLuaSympy.helpers as lsh
 
 var, eqt = lsh.getVandEfromFile('./equations.py')
 # print(var)

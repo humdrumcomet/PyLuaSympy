@@ -67,8 +67,8 @@ def expandAll(eqDict, varDict):
         eqDict[key].eqtExp = equationExpand(eqDict[key], eqDict)
         eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
         eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
-        eqDict[key].tex = latexGlsSub(eqDict[key].eqt,eqDict, varDict)
-        eqDict[key].texExp = latexGlsSub(eqDict[key].eqtExp,eqDict, varDict)
+        eqDict[key].tex = latexGlsSub(eqDict[key].eqt,eqDict, varDict, eqDict[key].texPrintOpts)
+        eqDict[key].texExp = latexGlsSub(eqDict[key].eqtExp, eqDict, varDict, eqDict[key].texPrintOpts)
 
     return [eqDict, varDict]
 
@@ -107,8 +107,8 @@ def lambdExpand(eqClassItem, varDict):
     lambdRet = lambdify(expExprTemp.free_symbols, expExprTemp, eqClassItem.lambdOpts)
     return lambdRet
 
-def latexGlsSub(exprExp, eqDict, varDict):
-    texTemp = latex(exprExp)
+def latexGlsSub(exprExp, eqDict, varDict, texOpts):
+    texTemp = latex(exprExp, )
     splitEqt = re.split(r'(\w*)', texTemp)
     symsList = []
     for idx, item in enumerate(splitEqt):

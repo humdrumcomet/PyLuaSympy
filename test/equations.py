@@ -24,9 +24,8 @@ newVar{c}{
 }
 newEq{anEq}{
     display = {\eta},
-    eqt = {aVar**2},
+    eqt = {aVar**(2/3)},
     units = {\giga\hertz},
-    description = {an equation example},
     # glsType = {symbol},
     # lambdifyOpts = {numpy},
     # specialExprOpts = {}
@@ -35,7 +34,6 @@ newEq{scndEq}{
     display = {\delta},
     eqt = {x*anEq*anotherVar/c},
     units = {\kilo\gram},
-    description = {another equation example},
     # glsType = {symbol},
     # lambdifyOpts = {numpy},
     # specialExprOpts = {}

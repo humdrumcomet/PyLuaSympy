@@ -26,6 +26,7 @@ class eqtClass:
         self.lambd = ''
         self.tex = ''
         self.texExp = ''
+        self.texPrintOpts = ''
 
     def process(self, dfp):
         self.display = dfp.get('display')
@@ -34,12 +35,16 @@ class eqtClass:
         self.glsType = dfp.get('glsType')
         self.description = dfp.get('description')
         self.lambdOpts = dfp.get('lambdifyOpts')
+        self.texPrintOpts = dfp.get('texPrintOpts')
 
         if not self.glsType:
             self.glsType = 'symbol'
 
         if not self.lambdOpts:
             self.glsType = 'numpy'
+
+        if self.texPrintOpts:
+            self.texPrintOpts = ', ' + self.texPrintOpts
 
 
 class varClass:
