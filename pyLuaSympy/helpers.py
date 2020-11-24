@@ -63,12 +63,18 @@ def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and
     return loc
 
 def expandAll(eqDict, varDict):
+    forLaterExp = []
     for key in eqDict:
-        eqDict[key].eqtExp = equationExpand(eqDict[key], eqDict)
-        eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
-        eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
-        eqDict[key].tex = latexGlsSub(eqDict[key].eqt,eqDict, varDict, eqDict[key].texPrintOpts)
-        eqDict[key].texExp = latexGlsSub(eqDict[key].eqtExp, eqDict, varDict, eqDict[key].texPrintOpts)
+        if eqDict[key].requiresProcess:
+            forLaterExp.append(key)
+        else:
+            eqDict[key].eqtExp = equationExpand(eqDict[key], eqDict)
+            eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
+            eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
+            eqDict[key].tex = latexGlsSub(eqDict[key].eqt,eqDict, varDict, eqDict[key].texPrintOpts)
+            eqDict[key].texExp = latexGlsSub(eqDict[key].eqtExp, eqDict, varDict, eqDict[key].texPrintOpts)
+
+    for key in forLaterExp
 
     return [eqDict, varDict]
 
@@ -77,7 +83,7 @@ def equationExpand(eqClassItem, eqDict):
     # for key, val in eqDict.items():
         # print(key)
 
-    if eqClassItem.eqtExp:
+    if eqClassItem.eqtExp or :
         return eqClassItem.eqtExp
 
     expExprTemp = eqClassItem.eqt
