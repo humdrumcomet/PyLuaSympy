@@ -148,6 +148,9 @@ def lambdExpand(eqClassItem, varDict):
 
 def latexGlsSub(exprExp, eqDict, varDict, texOpts):
     texTemp = latex(exprExp, )
+    if 'Integral' in str(exprExp):
+        texTemp, numIntChangedRemoved = re.subn(',\s*d', r',\\mathrm{d}', texTemp)
+
     splitEqt = re.split(r'(\w*)', texTemp)
     symsList = []
     for idx, item in enumerate(splitEqt):
