@@ -65,13 +65,12 @@ def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and
 
 def expandAll(eqDict, varDict):
     for key in eqDict:
-        eqDict[key].eqtExp, eqDict[key].equalExp = equationExpand(eqDict[key], eqDict)
-        print('postpop')
-        print(eqDict[key].eqtExp, eqDict[key].equalExp)
-        eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
+        equationExpand(eqDict[key], eqDict)
+        # print('postpop')
         eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
-        eqDict[key].tex = latexGlsSub(eqDict[key].equal,eqDict, varDict, eqDict[key].texPrintOpts)
-        eqDict[key].texExp = latexGlsSub(eqDict[key].equalExp, eqDict, varDict, eqDict[key].texPrintOpts)
+        eqDict[key].initTex = latexGlsSub(eqDict[key].initEqual,eqDict, varDict, eqDict[key].texPrintOpts)
+        eqDict[key].interTex = latexGlsSub(eqDict[key].interEqual, eqDict, varDict, eqDict[key].texPrintOpts)
+        eqDict[key].finTex = latexGlsSub(eqDict[key].finEqual, eqDict, varDict, eqDict[key].texPrintOpts)
 
     return [eqDict, varDict]
 
@@ -90,51 +89,61 @@ def solveExpand(solStr, eqDict):
         if 'solve' in solveSubStr:
             solveSubStr = solveExpand(solveSubStr, eqDict)
 
-        eqDict[solveSubStr].eqtExp, eqDict[solveSubStr].equalExp = equationExpand(eqDict[solveSubStr],eqDict)
-        solved = solve(eqDict[solveSubStr].equalExp, solveRep)
+        if not eqDict[solveSubStr].finEqt:
+            equationExpand(eqDict[solveSubStr],eqDict)
+
+        solved = solve(eqDict[solveSubStr].finEqual, solveRep)
         solvedStr = str(solved[0])
         solStr = solStr.replace(solStr[i.start(0):solveEnd+1],solvedStr)
 
-    return [solStr, eqtsSolved]
+    return [solStr, eqtsSolved, solveRep]
 
 
 def equationExpand(eqClassItem, eqDict):
-    if eqClassItem.eqtExp:
-        return [eqClassItem.eqtExp, eqClassItem.equalExp]
+    if eqClassItem.finEqt:
+        return None
 
-    if eqClassItem.solveExpr and not eqClassItem.eqt:
-        solvedStr, eqtsSolved = solveExpand(eqClassItem.solveExpr, eqDict)
-        eqClassItem.eqt = sympify(solvedStr)
-        eqClassItem.equal = Eq(symbols(eqClassItem.name), eqClassItem.eqt)
-        eqClassItem.symbs = eqClassItem.eqt.free_symbols
+    if 'solve' in eqClassItem.initExpr:
+        solvedStr, eqtsSolved, newDisplay = solveExpand(eqClassItem.initExpr, eqDict)
+        print('printer')
+        print(solvedStr)
+        print(newDisplay)
+        eqClassItem.interExpr = solvedStr
+        eqClassItem.initEqt = sympify(solvedStr)
+        eqClassItem.initEqual = Eq(symbols(newDisplay), eqClassItem.initEqt)
         eqClassItem.eqtsSolved = set(eqtsSolved)
-        print(eqClassItem.eqtsSolved)
-        print('inop')
-        print(eqClassItem.eqt)
-        print(eqClassItem.symbs)
-        # eqDict[eqClassItem.name] = eqClassItem
+    else:
+        print(eqClassItem.initExpr)
+        eqClassItem.initEqt = sympify(eqClassItem.initExpr)
+        eqClassItem.initEqual = Eq(symbols(eqClassItem.name), eqClassItem.initEqt)
 
-    expExprTemp = eqClassItem.eqt
-    equalExpTemp = eqClassItem.equal
-    for sym in eqClassItem.symbs:
+    eqClassItem.initSymbs = eqClassItem.initEqt.free_symbols
+    exprTemp = eqClassItem.initEqt
+    for sym in eqClassItem.initSymbs:
         symStr = str(sym)
         if symStr in eqDict and not symStr in eqClassItem.eqtsSolved:
-            if not eqDict[symStr].eqtExp:
-                eqDict[symStr].eqtExp, eqDict[symStr].equalExp = equationExpand(eqDict[symStr],eqDict)
+            if not eqDict[symStr].finEqt:
+                equationExpand(eqDict[symStr],eqDict)
 
-            expExprTemp = expExprTemp.subs(sym, eqDict[symStr].eqtExp)
-            equalExpTemp = equalExpTemp.subs(sym, eqDict[symStr].eqtExp)
+            exprTemp = exprTemp.subs(sym, eqDict[symStr].finEqt)
 
-    return [expExprTemp, equalExpTemp]
+    eqClassItem.interEqt = exprTemp
+    eqClassItem.interEqual = Eq(symbols(eqClassItem.name), exprTemp)
+    eqClassItem.interEqt = exprTemp.free_symbols
+    eqClassItem.finEqt = exprTemp.doit()
+    eqClassItem.finEqual = Eq(symbols(eqClassItem.name), exprTemp.doit())
+    eqClassItem.finSymbs = exprTemp.doit().free_symbols
+
+    return None
 
 def lambdExpand(eqClassItem, varDict):
-    expExprTemp = eqClassItem.eqtExp
+    exprTemp = eqClassItem.finEqt
     # for sym in eqDict[key].symbsExp:
         # if sym in varDict:
             # if varDict[sym].value:
                 # expExprTemp = expExprTemp.subs(sym, varDict[sym].value)
 
-    lambdRet = lambdify(expExprTemp.free_symbols, expExprTemp, eqClassItem.lambdOpts)
+    lambdRet = lambdify(exprTemp.free_symbols, exprTemp, eqClassItem.lambdOpts)
     return lambdRet
 
 def latexGlsSub(exprExp, eqDict, varDict, texOpts):

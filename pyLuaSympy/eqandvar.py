@@ -13,7 +13,6 @@ class eqtClass:
     def __init__(self, dictForProcess):
         self.name = ''
         self.display = ''
-        self.expr = ''
         self.units = ''
         self.glsType = ''
         self.description = ''
@@ -21,24 +20,29 @@ class eqtClass:
         self.lambdOpts = ''
         self.specialExprOpts = ''
         self.eqtType = 'equation'
-        self.eqt = ''
-        self.equal = ''
-        self.symbs = ''
-        self.eqtExp = ''
-        self.equalExp = ''
-        self.symbsExp = ''
-        self.lambd = ''
-        self.tex = ''
-        self.texExp = ''
-        self.texPrintOpts = ''
-        self.solveExpr = ''
+        self.initExpr = ''
+        self.initEqt = ''
+        self.initEqual = ''
+        self.initSymbs = ''
+        self.initTex = ''
+        self.interExpr = ''
+        self.interEqt = ''
+        self.interEqual = ''
+        self.interSymbs = ''
+        self.interTex = ''
+        self.finEqt = ''
+        self.finEqual = ''
+        self.finSymbs = ''
+        self.finTex = ''
         self.eqtsSolved = {}
+        self.lambd = ''
+        self.texPrintOpts = ''
         self.process(dictForProcess)
 
     def process(self, dfp):
         self.name = dfp.get('name')
         self.display = dfp.get('display')
-        self.expr = dfp.get('eqt')
+        self.initExpr = dfp.get('eqt')
         self.units = dfp.get('units')
         self.glsType = dfp.get('glsType')
         self.description = dfp.get('description')
@@ -59,12 +63,12 @@ class eqtClass:
         if self.texPrintOpts:
             self.texPrintOpts = ', ' + self.texPrintOpts
 
-        if not 'solve' in self.expr:
-            self.eqt = sympify(self.expr)
-            self.equal = Eq(symbols(self.name), self.eqt)
-            self.symbs = self.eqt.free_symbols
-        else:
-            self.solveExpr = self.expr
+        # if not 'solve' in self.expr:
+            # self.eqt = sympify(self.expr)
+            # self.equal = Eq(symbols(self.name), self.eqt)
+            # self.symbs = self.eqt.free_symbols
+        # else:
+            # self.solveExpr = self.expr
 
 class varClass:
     def __init__(self, dictForProcess):

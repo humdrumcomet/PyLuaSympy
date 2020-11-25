@@ -46,3 +46,15 @@ newEq{thrdEq}{
     units = {\mega\watt},
     description = {calculating the thing}
 }
+newEq{frthEq}{
+    display = {\rho},
+    eqt = {Integral(thrdEq, anotherVar)},
+    units = {\mega\watt},
+    description = {calculating the thing}
+}
+newEq{ffthEq}{
+    display = {\rho},
+    eqt = {Derivative(scndEq, x)},
+    units = {\mega\watt},
+    description = {calculating the thing}
+}
