@@ -1,8 +1,9 @@
 import re
 from pathlib import Path
 from . import eqandvar
-from sympy import symbols, latex, sympify
-from sympy.utilities.lambdify import lambdify, implemented_function
+import sympy
+from sympy import symbols, latex, sympify, Eq, lambdify, solve
+# from sympy.utilities.lambdify import lambdify, implemented_function
 
 # def variablename(var):
     # return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
@@ -63,45 +64,68 @@ def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and
     return loc
 
 def expandAll(eqDict, varDict):
-    forLaterExp = []
     for key in eqDict:
-        if eqDict[key].requiresProcess:
-            forLaterExp.append(key)
-        else:
-            eqDict[key].eqtExp = equationExpand(eqDict[key], eqDict)
-            eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
-            eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
-            eqDict[key].tex = latexGlsSub(eqDict[key].eqt,eqDict, varDict, eqDict[key].texPrintOpts)
-            eqDict[key].texExp = latexGlsSub(eqDict[key].eqtExp, eqDict, varDict, eqDict[key].texPrintOpts)
-
-    for key in forLaterExp
+        eqDict[key].eqtExp, eqDict[key].equalExp = equationExpand(eqDict[key], eqDict)
+        print('postpop')
+        print(eqDict[key].eqtExp, eqDict[key].equalExp)
+        eqDict[key].symbsExp = eqDict[key].eqtExp.free_symbols
+        eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
+        eqDict[key].tex = latexGlsSub(eqDict[key].equal,eqDict, varDict, eqDict[key].texPrintOpts)
+        eqDict[key].texExp = latexGlsSub(eqDict[key].equalExp, eqDict, varDict, eqDict[key].texPrintOpts)
 
     return [eqDict, varDict]
 
-def equationExpand(eqClassItem, eqDict):
-    # print(eqClassItem)
-    # for key, val in eqDict.items():
-        # print(key)
+def solveExpand(solStr, eqDict):
+    solvePat = re.compile('solve\(')
+    solves = solvePat.finditer(solStr)
+    eqtsSolved = []
+    for i in solves:
+        solveStart = i.end(0)
+        solveEnd = i.end(0)+findBalanced(solStr[i.end(0):], '(', ')')
+        solveFullSub = solStr[solveStart:solveEnd]
+        endexp = i.end(0)+solveFullSub.find(',')
+        solveSubStr = solStr[solveStart:endexp]
+        eqtsSolved.append(solveSubStr)
+        solveRep, comsRemoved = re.subn(',\s*', '', solStr[endexp:solveEnd])
+        if 'solve' in solveSubStr:
+            solveSubStr = solveExpand(solveSubStr, eqDict)
 
-    if eqClassItem.eqtExp or :
-        return eqClassItem.eqtExp
+        eqDict[solveSubStr].eqtExp, eqDict[solveSubStr].equalExp = equationExpand(eqDict[solveSubStr],eqDict)
+        solved = solve(eqDict[solveSubStr].equalExp, solveRep)
+        solvedStr = str(solved[0])
+        solStr = solStr.replace(solStr[i.start(0):solveEnd+1],solvedStr)
+
+    return [solStr, eqtsSolved]
+
+
+def equationExpand(eqClassItem, eqDict):
+    if eqClassItem.eqtExp:
+        return [eqClassItem.eqtExp, eqClassItem.equalExp]
+
+    if eqClassItem.solveExpr and not eqClassItem.eqt:
+        solvedStr, eqtsSolved = solveExpand(eqClassItem.solveExpr, eqDict)
+        eqClassItem.eqt = sympify(solvedStr)
+        eqClassItem.equal = Eq(symbols(eqClassItem.name), eqClassItem.eqt)
+        eqClassItem.symbs = eqClassItem.eqt.free_symbols
+        eqClassItem.eqtsSolved = set(eqtsSolved)
+        print(eqClassItem.eqtsSolved)
+        print('inop')
+        print(eqClassItem.eqt)
+        print(eqClassItem.symbs)
+        # eqDict[eqClassItem.name] = eqClassItem
 
     expExprTemp = eqClassItem.eqt
-    print(eqClassItem.symbs)
+    equalExpTemp = eqClassItem.equal
     for sym in eqClassItem.symbs:
         symStr = str(sym)
-        print(symStr)
-        print(symStr in eqDict)
-
-        if symStr in eqDict:
-            # print('hello')
-            # print(eqDict[sym].eqtExp)
+        if symStr in eqDict and not symStr in eqClassItem.eqtsSolved:
             if not eqDict[symStr].eqtExp:
-                eqDict[symStr].eqtExp = equationExpand(eqDict[symStr],eqDict,varDict)
+                eqDict[symStr].eqtExp, eqDict[symStr].equalExp = equationExpand(eqDict[symStr],eqDict)
 
             expExprTemp = expExprTemp.subs(sym, eqDict[symStr].eqtExp)
+            equalExpTemp = equalExpTemp.subs(sym, eqDict[symStr].eqtExp)
 
-    return expExprTemp
+    return [expExprTemp, equalExpTemp]
 
 def lambdExpand(eqClassItem, varDict):
     expExprTemp = eqClassItem.eqtExp

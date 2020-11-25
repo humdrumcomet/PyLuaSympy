@@ -19,22 +19,30 @@ newVar{c}{
     value = {3e8},
     units = {\meter\per\second}
     description = {speed of light},
-    glsType = {constant},
+    glsType = {cst},
     # ensureMath = {true}
 }
 newEq{anEq}{
     display = {\eta},
     eqt = {aVar**(2/3)},
     units = {\giga\hertz},
+    description = {a sub calculation}
     # glsType = {symbol},
     # lambdifyOpts = {numpy},
     # specialExprOpts = {}
 }
 newEq{scndEq}{
     display = {\delta},
-    eqt = {x*anEq*anotherVar/c},
+    eqt = {x*anEq*anotherVar/(aVar*c)},
     units = {\kilo\gram},
+    description = {calculating the thing}
     # glsType = {symbol},
     # lambdifyOpts = {numpy},
     # specialExprOpts = {}
+}
+newEq{thrdEq}{
+    display = {\rho},
+    eqt = {solve(scndEq, aVar)},
+    units = {\mega\watt},
+    description = {calculating the thing}
 }

@@ -9,4 +9,4 @@ print(eqt.scndEq.lambd(x=4, aVar=2, c=var.c.val, anotherVar=var.anotherVar.val))
 # print(eqt.scndEq.eqtExp)
 print(eqt.scndEq.tex)
 print(eqt.scndEq.texExp)
-
+print(eqt.thrdEq.texExp)

@@ -1,7 +1,7 @@
 import re
-from sympy import symbols, latex, sympify, Eq
-from sympy.utilities.lambdify import lambdify, implemented_function
-from sympy import Function
+from sympy import symbols, latex, sympify, Eq, lambdify, Function
+# from sympy.utilities.lambdify import lambdify, implemented_function
+# from sympy import Function
 from sympy.parsing.sympy_parser import parse_expr as parExp
 
 
@@ -11,6 +11,7 @@ class evDict(dict):
 
 class eqtClass:
     def __init__(self, dictForProcess):
+        self.name = ''
         self.display = ''
         self.expr = ''
         self.units = ''
@@ -19,20 +20,23 @@ class eqtClass:
         self.ensureMath = ''
         self.lambdOpts = ''
         self.specialExprOpts = ''
-        self.process(dictForProcess)
         self.eqtType = 'equation'
         self.eqt = ''
         self.equal = ''
         self.symbs = ''
         self.eqtExp = ''
+        self.equalExp = ''
         self.symbsExp = ''
         self.lambd = ''
         self.tex = ''
         self.texExp = ''
         self.texPrintOpts = ''
-        self.requiresProcess = False
+        self.solveExpr = ''
+        self.eqtsSolved = {}
+        self.process(dictForProcess)
 
     def process(self, dfp):
+        self.name = dfp.get('name')
         self.display = dfp.get('display')
         self.expr = dfp.get('eqt')
         self.units = dfp.get('units')
@@ -54,13 +58,13 @@ class eqtClass:
 
         if self.texPrintOpts:
             self.texPrintOpts = ', ' + self.texPrintOpts
-        if not 'sympy.' in self.expr:
+
+        if not 'solve' in self.expr:
             self.eqt = sympify(self.expr)
-            self.equal = Eq(self.display, self.eqt)
+            self.equal = Eq(symbols(self.name), self.eqt)
             self.symbs = self.eqt.free_symbols
         else:
-            self.requiresProcess = True
-
+            self.solveExpr = self.expr
 
 class varClass:
     def __init__(self, dictForProcess):
