@@ -105,15 +105,15 @@ def equationExpand(eqClassItem, eqDict):
 
     if 'solve' in eqClassItem.initExpr:
         solvedStr, eqtsSolved, newDisplay = solveExpand(eqClassItem.initExpr, eqDict)
-        print('printer')
-        print(solvedStr)
-        print(newDisplay)
+        # print('printer')
+        # print(solvedStr)
+        # print(newDisplay)
         eqClassItem.interExpr = solvedStr
         eqClassItem.initEqt = sympify(solvedStr)
         eqClassItem.initEqual = Eq(symbols(newDisplay), eqClassItem.initEqt)
         eqClassItem.eqtsSolved = set(eqtsSolved)
     else:
-        print(eqClassItem.initExpr)
+        # print(eqClassItem.initExpr)
         eqClassItem.initEqt = sympify(eqClassItem.initExpr)
         eqClassItem.initEqual = Eq(symbols(eqClassItem.name), eqClassItem.initEqt)
 
