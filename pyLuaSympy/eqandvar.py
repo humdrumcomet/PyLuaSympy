@@ -35,7 +35,8 @@ class eqtClass:
         self.finSymbs = ''
         self.finTex = ''
         self.eqtsSolved = {}
-        self.lambd = ''
+        self.initLam = ''
+        self.finLam = ''
         self.texPrintOpts = ''
         self.process(dictForProcess)
 

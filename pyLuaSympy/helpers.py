@@ -67,7 +67,7 @@ def expandAll(eqDict, varDict):
     for key in eqDict:
         equationExpand(eqDict[key], eqDict)
         # print('postpop')
-        eqDict[key].lambd = lambdExpand(eqDict[key],varDict)
+        eqDict[key].initLam, eqDict[key].finLam = lambdExpand(eqDict[key],varDict)
         eqDict[key].initTex = latexGlsSub(eqDict[key].initEqual,eqDict, varDict, eqDict[key].texPrintOpts)
         eqDict[key].interTex = latexGlsSub(eqDict[key].interEqual, eqDict, varDict, eqDict[key].texPrintOpts)
         eqDict[key].finTex = latexGlsSub(eqDict[key].finEqual, eqDict, varDict, eqDict[key].texPrintOpts)
@@ -137,14 +137,16 @@ def equationExpand(eqClassItem, eqDict):
     return None
 
 def lambdExpand(eqClassItem, varDict):
-    exprTemp = eqClassItem.finEqt
+    exprTempFin = eqClassItem.finEqt
+    exprTempInit = eqClassItem.initEqt.doit()
     # for sym in eqDict[key].symbsExp:
         # if sym in varDict:
             # if varDict[sym].value:
                 # expExprTemp = expExprTemp.subs(sym, varDict[sym].value)
 
-    lambdRet = lambdify(exprTemp.free_symbols, exprTemp, eqClassItem.lambdOpts)
-    return lambdRet
+    lambdRetInit = lambdify(exprTempInit.free_symbols, exprTempInit, eqClassItem.lambdOpts)
+    lambdRetFin = lambdify(exprTempFin.free_symbols, exprTempFin, eqClassItem.lambdOpts)
+    return lambdRetInit, lambdRetFin
 
 def latexGlsSub(exprExp, eqDict, varDict, texOpts):
     texTemp = latex(exprExp, )
