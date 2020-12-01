@@ -155,10 +155,20 @@ def latexGlsSub(exprExp, eqDict, varDict, texOpts):
     symsList = []
     for idx, item in enumerate(splitEqt):
         if item in eqDict:
-            splitEqt[idx] = '\\gls{'+item+'}'
+            if eqDict[item].description:
+                splitEqt[idx] = '\\gls{'+item+'}'
+            elif eqDict[item].display and eqDict[item].ensureMath:
+                splitEqt[idx] = '\\ensureMath{'+eqDict[item].display+'}'
+            elif eqDict[item].display and not eqDict[item].ensureMath:
+                splitEqt[idx] = eqDict[item].display
 
         if item in varDict:
-            splitEqt[idx] = '\\gls{'+item+'}'
+            if varDict[item].description:
+                splitEqt[idx] = '\\gls{'+item+'}'
+            elif varDict[item].display and varDict[item].ensureMath:
+                splitEqt[idx] = '\\ensureMath{'+varDict[item].display+'}'
+            elif varDict[item].display and not varDict[item].ensureMath:
+                splitEqt[idx] = varDict[item].display
 
 
     texTemp = ''.join(splitEqt)

@@ -7,20 +7,16 @@ newVar{aVar}{
     # ensureMath = {true}
 }
 newVar{anotherVar}{
-    display = {\phi^{\omega}},
     value = {100},
     units = {\mega\electronvolt},
     description = {test variable},
-    # glsType = {symbol},
-    # ensureMath = {true}
 }
 newVar{c}{
     display = {c},
     value = {3e8},
     units = {\meter\per\second}
-    description = {speed of light},
     glsType = {cst},
-    # ensureMath = {true}
+    ensureMath = {false}
 }
 newEq{anEq}{
     display = {\eta},
@@ -44,7 +40,6 @@ newEq{thrdEq}{
     display = {\rho},
     eqt = {solve(scndEq, aVar)},
     units = {\mega\watt},
-    description = {calculating the thing}
 }
 newEq{frthEq}{
     display = {\rho},
