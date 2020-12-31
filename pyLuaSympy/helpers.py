@@ -5,49 +5,61 @@ import sympy
 from sympy import symbols, latex, sympify, Eq, lambdify, solve
 # from sympy.utilities.lambdify import lambdify, implemented_function
 
-# def variablename(var):
-    # return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
+def variablename(var):
+    print(var.__name__)
+    print(tpl for tpl in filter(lambda x: var is x[1], globals().items()))
+    return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
 
-def getVandEfromFile(file):
+def getVandEfromFile(file, nameSpace=globals()):
     strToConv = Path(file).read_text()
     varDict, eqtDict = getVandEfromLocal(strToConv)
     eqtPro, varPro= expandAll(eqtDict, varDict)
+    for k,v in eqtPro.items():
+        nameSpace[k] = v
 
+    for k,v in varPro.items():
+        nameSpace[k] = v
     # varPro, eqtPro = processVandEtoveDict(varDict, eqtDict)
+    # return [varDict, eqtDict]
     return [varPro, eqtPro]
 
 def getVandEfromLocal(strIn):
-    varDict = stringToDict(strIn, 'Var')
-    eqtDict = stringToDict(strIn, 'Eq')
+    varDict, eqtDict = stringToDict(strIn)
         
     return [varDict, eqtDict]
 
-def stringToDict(strIn, typeSeek):
+def stringToDict(strIn):
     strIn, numComsRemoved = re.subn('\s*#.*\n', '\n', strIn) # remove all comments
-    namePat = re.compile('new'+typeSeek+'\s*{\s*(\w*)\s*}\s*{\s*') #patter for find variable or equation names
+    namePat = re.compile('\s*(\w*)\s*=\s*nve\(\s*') #patter for find variable or equation names
     names = namePat.finditer(strIn) #get an iterator of all match objects for the above pattern
-    newDict = eqandvar.evDict()
-    subNamePat = re.compile('\s*(\w+)\s*=\s*\{') #pattern for var or eqt parameter names
+    newEqDict = eqandvar.evDict()
+    newVarDict = eqandvar.evDict()
+    subNamePat = re.compile('\s*(\w+)\s*=\s*(.*?),\s*\w*\s*=\s*|\s*(\w+)\s*=\s*(.*?),?\s*$')
     for i in names:
         preprocessDict = {'name':i.group(1)}
         startLoc = i.end(0) # get the endlocation of the var or eq beginning 
-        endLoc = startLoc+findBalanced(strIn[startLoc:],'{', '}')
+        endLoc = startLoc+findBalanced(strIn[startLoc:],'(', ')')
         curLoc = startLoc
         strCur = strIn[curLoc:endLoc]
-        while len(strCur)>5:
+        print(i.group(1))
+        while len(strCur)>3:
             subNameMatch = subNamePat.search(strCur)
-            subNameVal = subNameMatch.end(0) #curLoc+len(subNameMatch.group(0))
-            subNameValEnd = subNameVal+findBalanced(strCur[subNameVal:],'{','}')
-            preprocessDict[subNameMatch.group(1)] = strCur[subNameVal:subNameValEnd]
-            curLoc = subNameValEnd
+            print('-----in------')
+            key = subNameMatch.group(1) or subNameMatch.group(3)
+            val = subNameMatch.group(2) or subNameMatch.group(4)
+            print(key)
+            print(val)
+            print('---------------')
+            preprocessDict[key] = val #strCur[subNameVal:subNameValEnd]
+            curLoc = subNameMatch.end(2) #subNameValEnd
             strCur = strCur[curLoc:]
 
-        if typeSeek == 'Var':
-            newDict[i.group(1)] = eqandvar.varClass(preprocessDict) # add a dictionary entry for this var or eq
-        elif typeSeek == 'Eq':
-            newDict[i.group(1)] = eqandvar.eqtClass(preprocessDict) # add a dictionary entry for this var or eq
+        if 'expr' in preprocessDict:
+            newEqDict[i.group(1)] = eqandvar.eqtClass(preprocessDict) # add a dictionary entry for this var or eq
+        elif 'value' in preprocessDict:
+            newVarDict[i.group(1)] = eqandvar.varClass(preprocessDict) # add a dictionary entry for this var or eq
 
-    return newDict
+    return [newVarDict, newEqDict]
 
 def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and bC
     openBr = 1
@@ -160,7 +172,8 @@ def latexGlsSub(exprExp, eqDict, varDict, texOpts):
             if eqDict[item].description:
                 splitEqt[idx] = '\\gls{'+item+'}'
             elif eqDict[item].display and eqDict[item].ensureMath:
-                splitEqt[idx] = '\\ensureMath{'+eqDict[item].display+'}'
+                # print(eqDict[item].display)
+                splitEqt[idx] = '\\ensuremath{'+eqDict[item].display+'}'
             elif eqDict[item].display and not eqDict[item].ensureMath:
                 splitEqt[idx] = eqDict[item].display
 
@@ -168,7 +181,8 @@ def latexGlsSub(exprExp, eqDict, varDict, texOpts):
             if varDict[item].description:
                 splitEqt[idx] = '\\gls{'+item+'}'
             elif varDict[item].display and varDict[item].ensureMath:
-                splitEqt[idx] = '\\ensureMath{'+varDict[item].display+'}'
+                # print(varDict[item].display)
+                splitEqt[idx] = '\\ensuremath{'+varDict[item].display+'}'
             elif varDict[item].display and not varDict[item].ensureMath:
                 splitEqt[idx] = varDict[item].display
 

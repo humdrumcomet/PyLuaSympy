@@ -36,14 +36,16 @@ class eqtClass:
         self.finTex = ''
         self.eqtsSolved = {}
         self.initLam = ''
+        self.initLamSub = ''
         self.finLam = ''
+        self.finLamSub = ''
         self.texPrintOpts = ''
         self.process(dictForProcess)
 
     def process(self, dfp):
         self.name = dfp.get('name')
         self.display = dfp.get('display')
-        self.initExpr = dfp.get('eqt')
+        self.initExpr = dfp.get('expr')
         self.units = dfp.get('units')
         self.glsType = dfp.get('glsType')
         self.description = dfp.get('description')
@@ -85,11 +87,15 @@ class varClass:
     def process(self, dfp):
         self.var = symbols(dfp.get('name'))
         self.display = dfp.get('display')
-        self.val = float(dfp.get('value'))
         self.units = dfp.get('units')
         self.glsType = dfp.get('glsType')
         self.description = dfp.get('description')
         self.ensureMath = dfp.get('ensureMath')
+
+        if dfp.get('value'):
+            self.val = float(dfp.get('value'))
+        else:
+            self.val = ''
 
         if self.ensureMath:
             self.ensureMath = self.ensureMath.lower() == 'true'
