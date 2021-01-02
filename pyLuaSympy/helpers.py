@@ -14,13 +14,8 @@ def getVandEfromFile(file, nameSpace=globals()):
     strToConv = Path(file).read_text()
     varDict, eqtDict = getVandEfromLocal(strToConv)
     eqtPro, varPro= expandAll(eqtDict, varDict)
-    for k,v in eqtPro.items():
-        nameSpace[k] = v
-
-    for k,v in varPro.items():
-        nameSpace[k] = v
-    # varPro, eqtPro = processVandEtoveDict(varDict, eqtDict)
-    # return [varDict, eqtDict]
+    nameSpace.update(eqtPro)
+    nameSpace.update(varPro)
     return [varPro, eqtPro]
 
 def getVandEfromLocal(strIn):
@@ -44,12 +39,12 @@ def stringToDict(strIn):
         print(i.group(1))
         while len(strCur)>3:
             subNameMatch = subNamePat.search(strCur)
-            print('-----in------')
+            # print('-----in------')
             key = subNameMatch.group(1) or subNameMatch.group(3)
             val = subNameMatch.group(2) or subNameMatch.group(4)
-            print(key)
-            print(val)
-            print('---------------')
+            # print(key)
+            # print(val)
+            # print('---------------')
             preprocessDict[key] = val #strCur[subNameVal:subNameValEnd]
             curLoc = subNameMatch.end(2) #subNameValEnd
             strCur = strCur[curLoc:]

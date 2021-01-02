@@ -10,15 +10,19 @@ class evDict(dict):
         return self[item]
 
 class eqtClass:
-    def __init__(self, dictForProcess):
-        self.name = ''
-        self.display = ''
-        self.units = ''
-        self.glsType = ''
-        self.description = ''
-        self.ensureMath = ''
-        self.lambdOpts = ''
+    def __init__(self, dfp):
+        self.name = dfp.get('name') or ''
+        self.display = dfp.get('display') or ''
+        self.initExpr = dfp.get('expr') or ''
+        self.units = dfp.get('units') or ''
+        self.glsType = dfp.get('glsType') or 'sym'
+        self.description = dfp.get('description') or ''
+        self.lambdOpts = dfp.get('lambdifyOpts') or 'numpy'
+        self.texPrintOpts = ''
+
+        self.ensureMath = (dfp.get('ensureMath') or 'true').lower() == 'true'
         self.specialExprOpts = ''
+
         self.eqtType = 'equation'
         self.initExpr = ''
         self.initEqt = ''
@@ -39,68 +43,25 @@ class eqtClass:
         self.initLamSub = ''
         self.finLam = ''
         self.finLamSub = ''
-        self.texPrintOpts = ''
-        self.process(dictForProcess)
 
-    def process(self, dfp):
-        self.name = dfp.get('name')
-        self.display = dfp.get('display')
-        self.initExpr = dfp.get('expr')
-        self.units = dfp.get('units')
-        self.glsType = dfp.get('glsType')
-        self.description = dfp.get('description')
-        self.lambdOpts = dfp.get('lambdifyOpts')
-        self.texPrintOpts = dfp.get('texPrintOpts')
+        if dfp.get('texPrintOpts'):
+            self.texPrintOpts = ', ' + dfp.get('texPrintOpts')
 
-        if self.ensureMath:
-            self.ensureMath = self.ensureMath.lower() == 'true'
-        else:
-            self.ensureMath = True
+    def compute(self, **kwargs):
+        pass
 
-        if not self.glsType:
-            self.glsType = 'sym'
-
-        if not self.lambdOpts:
-            self.lambdOpts = 'numpy'
-
-        if self.texPrintOpts:
-            self.texPrintOpts = ', ' + self.texPrintOpts
-
-        # if not 'solve' in self.expr:
-            # self.eqt = sympify(self.expr)
-            # self.equal = Eq(symbols(self.name), self.eqt)
-            # self.symbs = self.eqt.free_symbols
-        # else:
-            # self.solveExpr = self.expr
+    def texPrint(self, **kwargs):
+        pass
 
 class varClass:
-    def __init__(self, dictForProcess):
-        self.var = '' #Symbol(displaySym)
-        self.display = ''
+    def __init__(self, dfp):
+        self.var = symbols(dfp.get('name')) #Symbol(displaySym)
+        self.display = dfp.get('display') or ''
         self.val = '' #value
-        self.units = '' #units
-        self.glsType = '' #glsType
-        self.description = '' #description
-        self.ensureMath = ''
-        self.process(dictForProcess)
-
-    def process(self, dfp):
-        self.var = symbols(dfp.get('name'))
-        self.display = dfp.get('display')
-        self.units = dfp.get('units')
-        self.glsType = dfp.get('glsType')
-        self.description = dfp.get('description')
-        self.ensureMath = dfp.get('ensureMath')
+        self.units = dfp.get('units') or '' #units
+        self.glsType = dfp.get('glsType') or 'sym' #glsType
+        self.description = dfp.get('description') or '' #description
+        self.ensureMath = (dfp.get('ensureMath') or 'true').lower() == 'true'
 
         if dfp.get('value'):
             self.val = float(dfp.get('value'))
-        else:
-            self.val = ''
-
-        if self.ensureMath:
-            self.ensureMath = self.ensureMath.lower() == 'true'
-        else:
-            self.ensureMath = True
-        
-        if not self.glsType:
-            self.glsType = 'sym'
