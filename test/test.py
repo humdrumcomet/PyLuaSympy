@@ -1,18 +1,26 @@
+import os
 import pyLuaSympy.helpers as lsh
 
-var, eqt = lsh.getVandEfromFile('./equations.py', globals())
-# print(var)
-# print(eqt)
+path = os.path.join(os.path.dirname(__file__), './equations.py')
+var, eqt = lsh.multiVandEfromFile(path, globals())
 
 print(aVar)
 print(scndEq)
+t = scndEq.calc('t', x=1e3)
+s = thrdEq.calc('s')
+tex = scndEq.totex('t')
+tex2 = thrdEq.totex('s')
+print(tex[0])
+print(tex2[0])
+# print(
+print(t)
 # print(eqt.scndEq.lambd(x=4, aVar=2, c=var.c.val, anotherVar=var.anotherVar.val))
 # print(eqt.scndEq.eqt)
 # print(eqt.scndEq.eqtExp)
-print(scndEq.finTex)
-print(scndEq.interTex)
-print(thrdEq.initTex)
-print(thrdEq.finTex)
+# print(scndEq.finTex)
+# print(scndEq.interTex)
+# print(thrdEq.initTex)
+# print(thrdEq.finTex)
 # print(frthEq.finTex)
 # print(ffthEq.finTex)
 

@@ -7,20 +7,21 @@ aVar = nve(
     ensureMath = true
 )
 anotherVar = nve(
+    symbol = \delta
     value = 100,
     units = \mega\electronvolt,
-    descrition = test variable,
+    description = test variable
 )
 c = nve(
     value = 3e8,
-    display = c,
+    symbol = c,
     units = \meter\per\second,
     glsType = cst,
     ensureMath = false
 )
 anEq = nve(
     expr = aVar**(2/3),
-    display = \eta,
+    symbol = \eta,
     units = \giga\hertz,
     description = a sub calculation,
     lambdifyOpts = numpy,
@@ -28,12 +29,12 @@ anEq = nve(
 )
 scndEq = nve(
     expr = x*anEq*anotherVar/(aVar*c),
-    display = \delta,
+    symbol = \delta,
     units = \kilo\gram,
     description = calculating the thing
 )
 thrdEq = nve(
     expr = solve(scndEq, aVar),
-    display = \rho,
+    symbol = \rho,
     units = \mega\watt
 )
