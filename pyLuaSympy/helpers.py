@@ -3,8 +3,6 @@ from pathlib import Path
 from . import eqandvar
 
 def variablename(var, namespace):
-    print(var.__name__)
-    print(tpl for tpl in filter(lambda x: var is x[1], globals().items()))
     return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
 
 def multiVandEfromFile(file, nameSpace=None):
@@ -30,7 +28,6 @@ def multiVandEfromString(strIn, varDict, eqtDict):
         endLoc = startLoc+findBalanced(strIn[startLoc:],'(', ')')
         curLoc = startLoc
         strCur = strIn[curLoc:endLoc]
-        print(i.group(1))
         while len(strCur)>3:
             subNameMatch = subNamePat.search(strCur)
             key = subNameMatch.group(1) or subNameMatch.group(3)

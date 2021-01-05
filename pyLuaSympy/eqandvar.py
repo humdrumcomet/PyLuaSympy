@@ -52,6 +52,8 @@ class eqtClass(evClass):
         self.specialExprOpts = ''
         self.eqtType = 'equation'
         self.computeList = {}
+        self.delayExp = (dfp.get('delayExp') and re.split('\s*,\s*', dfp.get('delayExp'))) or []
+        self.noExp = (dfp.get('noExp') and re.split('\s*,\s*', dfp.get('noExp'))) or []
 
     def calc(self, *args, **kwargs):
         name = kwargs.pop('name', None) or (args and args[0]) or str(len(self.computeList))
@@ -61,54 +63,62 @@ class eqtClass(evClass):
 
     def totex(self, *args, **kwargs):
         name = kwargs.pop('name', None) or (args and args[0])
+        mulSymbol = kwargs.pop('mulSymbol', 'dot')
         optsDict = self.computeList.get(name) or {}
         optsDict.update(kwargs)
         eqt, steps = self.expand(**optsDict)
-        # print(len(steps))
         for idx, item in enumerate(steps):
             steps[idx] = self.latexGlsSub(item, **optsDict)
 
-        steps.append(self.latexGlsSub(self.solutionShowSub(latex(Eq(symbols(self.name), eqt)))))
+        steps.append(self.latexGlsSub(self.solutionShowSub(str(Eq(symbols(self.name), eqt)), **optsDict)))
         steps.append(self.latexGlsSub(self.solution(eqt, **optsDict)))
         eqt = self.latexGlsSub(eqt, **optsDict)
         steps = list(dict.fromkeys(steps))
 
-        # print('------print')
-        # for i in steps:
-            # print(i)
-
-        # print('------printClean')
-        # print(eqt)
-        # for i in steps:
-            # print(i)
         return [eqt, steps]
-
 
     def expand(self, **kwargs):
         varDict = kwargs.pop('varDict', None) or self.vDict
         eqtDict = kwargs.pop('eqtDict', None) or self.eDict
-        # kwargs['solved'] = kwargs.get('solved') or []
-        kwargs['noExp'] = kwargs.get('noExp') or []
-        steps = []
-        if 'solve' in self.expr:
-            pass
+        fromExp = kwargs.pop('fromExp', False)
+        steps = kwargs.pop('steps', [])
+        kwargs['noExp'] = self.noExp+(kwargs.get('noExp') or [])
+        if 'solve(' in self.expr:
             solvedStr, newDisplay = self.solveExpand(**kwargs)
             eqt = sympify(solvedStr)
-            print(kwargs['noExp'])
-            # kwargs['noExp'].append(eqtsSolved)
         else:
             eqt = sympify(self.expr)
             steps.append(eqt)
+        
+        if 'Integral(' in self.expr or 'Derivative(' in self.expr:
+            for i in eqt.variables:
+                iStr = str(i)
+                if iStr in eqtDict:
+                    self.delayExp.append(iStr)
 
-        for i in eqt.free_symbols:
-            iStr = str(i)
-            if iStr in eqtDict and not(iStr in kwargs) and not(iStr in kwargs['noExp']):
-                inter, interSteps = eqtDict[iStr].expand(**kwargs)
+        kwargs['delayExp'] = self.delayExp+(kwargs.get('delayExp') or [])
+        curFree = set(map(str, eqt.free_symbols))
+        toExp = list((curFree & set(eqtDict.keys())) - (curFree & set(list(kwargs.keys())+kwargs['noExp']+kwargs['delayExp'])))
+
+        while toExp and not fromExp:
+            for i in toExp:
+                inter, interSteps = eqtDict[i].expand(fromExp = True, **kwargs)
                 eqt = eqt.subs(i, inter)
-                steps.extend(interSteps)
+            
+            steps.append(eqt)
+            curFree = set(map(str, eqt.free_symbols))
+            toExp = list((curFree & set(eqtDict.keys())) - (curFree & set(list(kwargs.keys())+kwargs['noExp']+kwargs['delayExp'])))
 
         eqt = eqt.doit()
         steps.append(eqt)
+        steps = list(dict.fromkeys(steps))
+        for i in eqt.free_symbols:
+            iStr = str(i)
+            if iStr in eqtDict and iStr in kwargs['delayExp']:
+                inter, interSteps = eqtDict[iStr].expand(**kwargs)
+                eqt = eqt.subs(i, inter)
+                steps.append(interSteps)
+
         return [eqt, steps]
 
     def solveExpand(self, solStr=None, **kwargs):
@@ -116,7 +126,6 @@ class eqtClass(evClass):
         varDict = kwargs.pop('varDict', None) or self.vDict
         eqtDict = kwargs.pop('eqtDict', None) or self.eDict
         rootsReturn = kwargs.pop('rootsRet', None) or 0
-        # kwargs['noExp'] = kwargs.get('noExp') or []
         solvePat = re.compile('solve\(')
         solves = solvePat.finditer(solStr)
         for i in solves:
@@ -126,7 +135,6 @@ class eqtClass(evClass):
             endexp = i.end(0)+solveFullSub.find(',')
             solveSubStr = solStr[solveStart:endexp]
             kwargs['noExp'].append(solveSubStr)
-            # eqtsSolved.append(solveSubStr)
             solveRep, comsRemoved = re.subn(',\s*', '', solStr[endexp:solveEnd])
             if 'solve' in solveSubStr:
                 solveSubStr = self.solveExpand(solveSubStr, **kwargs)
@@ -162,7 +170,7 @@ class eqtClass(evClass):
             elif item in kwargs:
                 splitEqt[idx] = str(kwargs[item])
 
-        eqtStr = ''.join(splitEqt)
+        eqtStr = latex(sympify(''.join(splitEqt), evaluate=False))
         return eqtStr
 
     def latexGlsSub(self, eqt, **kwargs):
@@ -182,17 +190,13 @@ class eqtClass(evClass):
             if item in eqtDict:
                 if eqtDict[item].description:
                     splitEqt[idx] = '\\gls{'+item+'}'
-                elif eqtDict[item].symbol and eqtDict[item].ensureMath:
-                    splitEqt[idx] = '\\ensureMath{'+eqtDict[item].symbol+'}'
-                elif eqtDict[item].symbol and not eqtDict[item].ensureMath:
+                elif eqtDict[item].symbol:
                     splitEqt[idx] = eqtDict[item].symbol
 
             if item in varDict:
                 if varDict[item].description:
                     splitEqt[idx] = '\\gls{'+item+'}'
-                elif varDict[item].symbol and varDict[item].ensureMath:
-                    splitEqt[idx] = '\\ensureMath{'+varDict[item].symbol+'}'
-                elif varDict[item].symbol and not varDict[item].ensureMath:
+                elif varDict[item].symbol:
                     splitEqt[idx] = varDict[item].symbol
 
         texTemp = ''.join(splitEqt)
