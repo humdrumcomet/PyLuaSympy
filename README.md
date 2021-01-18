@@ -18,10 +18,10 @@ sympy
 Installing via pip however should resolve any dependency issues and install any missing packages.
 
 ## Installation
-Installation is done by cloning this github repo and installing using 
+Installation is done by cloning this github repo and installing using pip
 ```
 $ git clone https://github.com/humdrumcomet/pyluasympy
-$ cd lunatexPython
+$ cd pyluasympy
 $ pip install -U -e ./
 ```
 ## Basic Usage
