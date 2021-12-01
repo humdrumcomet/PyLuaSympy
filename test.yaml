@@ -1,0 +1,2 @@
+equation:
+  expr: Integral(x**y)
