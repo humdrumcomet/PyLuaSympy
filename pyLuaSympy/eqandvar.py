@@ -28,26 +28,26 @@ class evDict(dict):
 
 
 class evClass:
-    def __init__(self, dfp):
-        self.name = dfp.get('name')
+    def __init__(self, name, dfp):
+        self.name = name
         self.symbol = dfp.get('symbol')
         self.units = dfp.get('units')
-        self.glsType = dfp.get('glsType') or 'sym'
+        self.glsType = dfp.get('glsType', 'sym')
         self.description = dfp.get('description')
-        self.ensureMath = (dfp.get('ensureMath') or 'true').lower() == 'true'
+        self.ensureMath = dfp.get('ensureMath', True) 
 
 class varClass(evClass):
-    def __init__(self, dfp):
-        evClass.__init__(self, dfp)
+    def __init__(self, name, dfp):
+        evClass.__init__(self, name, dfp)
         self.val = dfp.get('value') and float(dfp.get('value'))
 
 class eqtClass(evClass):
-    def __init__(self, vDict, eDict, dfp):
-        evClass.__init__(self, dfp)
+    def __init__(self, name, vDict, eDict, dfp):
+        evClass.__init__(self, name, dfp)
         self.eDict = eDict
         self.vDict = vDict
         self.expr = dfp.get('expr')
-        self.lambdOpts = dfp.get('lambdifyOpts') or 'numpy'
+        self.lambdOpts = dfp.get('lambdifyOpts', 'numpy')
         self.texPrintOpts = dfp.get('texPrintOpts') and ', ' + dfp.get('texPrintOpts')
         self.specialExprOpts = ''
         self.eqtType = 'equation'
