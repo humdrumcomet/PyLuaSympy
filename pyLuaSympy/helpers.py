@@ -1,6 +1,16 @@
 import re
+import yaml
 from pathlib import Path
 from . import eqandvar
+
+def yamlLoader(filePath, namespace=None):
+    with open(Path(filePath), 'r') as file:
+        mVandE = yaml.safe_load(file)
+
+    newVars = eqandvar.evDict()
+    newEqts = eqandvar.evDict()
+    print(mVandE)
+    # return newVars, newEqts
 
 def variablename(var, namespace):
     return [tpl[0] for tpl in filter(lambda x: var is x[1], globals().items())]
@@ -42,16 +52,3 @@ def multiVandEfromString(strIn, varDict, eqtDict):
             eqtDict[i.group(1)] = eqandvar.eqtClass(varDict,eqtDict,preprocessDict) # add a dictionary entry for this var or eq
 
 
-def findBalanced(strIn, bO, bC): # find the balanced bracket (or similar) b0 and bC
-    openBr = 1
-    loc = 1 #start from 1 and assume that a lone instance of b0 has already passed (for while loop)
-    while openBr:
-        if strIn[loc] == bO:
-            openBr = openBr+1
-        elif strIn[loc] == bC:
-            openBr = openBr-1
-
-        loc = loc+1
-
-    loc = loc-1
-    return loc

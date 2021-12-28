@@ -1,8 +1,8 @@
 import os
 import pyLuaSympy.helpers as lsh
 
-path = os.path.join(os.path.dirname(__file__), './equations.py')
-var, eqt = lsh.multiVandEfromFile(path, globals())
+path = os.path.join(os.path.dirname(__file__), './test.yaml')
+var, eqt = lsh.yamlLoader(path)
 
 # print(aVar)
 # print(scndEq)

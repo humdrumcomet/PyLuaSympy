@@ -7,5 +7,7 @@ setup(
     description='perform computation and then seamlessly pull them into latex',
     author='Aaron English',
     install_requires=['sympy',
-                      'numpy'],
+                      'numpy',
+                      'pyyaml',
+                      ],
 )
