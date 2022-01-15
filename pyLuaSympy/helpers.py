@@ -23,5 +23,99 @@ def yamlLoader(filePath, namespace=None):
                 newAux[k2] = preProcDict
 
 
-    print(mVandE)
+    # print(mVandE)
     return newVars, newEqts, newAux
+
+def toGlossHeader(auxDict, varDict, eqtDict):
+    combDict = {}
+    combDict.update(auxDict)
+    combDict.update(varDict)
+    combDict.update(eqtDict)
+    glsString = ''
+    glsType = {
+        'symbol': 'symbols',
+        'sym': 'symbols',
+        'constant': 'constants',
+        'cst': 'constants',
+        'acronym': r'\acronymtype',
+        'acr': r'\acronymtype',
+    }
+    for k, v in combDict.items():
+        partList = []
+        if (type(v) is type(dict())) and v.get('description', False):
+            glg = 'descriptionExt' in v
+            partList.append( (glg and
+                             r'\newglossaryentry{' +
+                             k + r'g}{name={\glsentrytext{' +
+                             k + r'}}, description={' +
+                             v['descriptionExt'] + r'}}') or
+                             '')
+
+            partList.append(r'\newglossaryentry{' +
+                            k +
+                            r'}{')
+
+            partList.append( (('glstype' in v) and
+                              r'type=' +
+                              glsType[v['glstype']] +
+                              r',' ) or
+                             '')
+
+            partList.append( r'name={' +
+                             v['display'] +
+                             r'},' )
+
+            partList.append( r'description={' +
+                             v['description'] +
+                             r'}' )
+
+            partList.append( (('plural' in v) and
+                              r'plural={' +
+                              v['plural'] +
+                              r'},') or
+                             r'plural={' +
+                             v['display'] +
+                             r's},' )
+
+            partList.append( (('descriptionplural' in v) and
+                              r'descriptionplural={' +
+                              v['descriptionplural'] +
+                              r'},') or
+                             r'descriptionplural={' +
+                             v['description'] +
+                             r's},' )
+
+            if v.get('glstype', '') == 'acronym':
+                # print(v['first'])
+                acrPart = ((('first' in v) and
+                            r'first={' + v['first']) or
+                           r'first={\glsentrydesc{' +
+                           k +
+                           r'} (\glsentrytext{' +
+                           k +
+                           r'})')
+
+                acrGlg = ((glg and r'\glsadd{' + k + r'g}') or '') + r'},'
+                partList.append( acrPart + acrGlg )
+                partList.append( 'firstplural' in v and
+                                 r'firstplural={' +
+                                 v['firstplural'] +
+                                 r'}' or
+                                 r'first={\glsentrydescplural{' +
+                                 k +
+                                 r'} (\glsentryplural{' +
+                                 k +
+                                 r'})')
+
+        elif getattr(v, 'description', False):
+            partList.append(r'\newglossaryentry{' + k + r'}{type=')
+            partList.append(glsType[v.glsType] + r', ')
+            partList.append(r'name={' + ((v.ensureMath and r'\ensuremath{' + v.name + r'}') or v.name ) + r'}, ')
+            partList.append(r'description={' + v.description + r'}} ')
+
+        print(partList)
+        for i in partList:
+            glsString = glsString + i
+
+    return glsString
+# def eqtTexPrint(eqt):

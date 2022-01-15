@@ -46,31 +46,31 @@ equations:
 
 glossary:
   cpp:
-    glstype: glossary
+    # glstype: glossary not needed
     display: C++
     description: 'C++ is a programming language that can be used as an object oriented programming language, an imperative programming language, and still provide low-level memory control. Note: All C++ code used in this work is compiled under the C++11 standard'
 
   acdc:
-    glstype: glossary
     display: rectifier
     description: an AC to DC voltage converter
-    plural: rectifiers
-    descriptionplural: AC to DC voltage converters
+    # glstype: glossary
+    # plural: rectifiers
+    # descriptionplural: AC to DC voltage converters
 
   cad:
     glstype: acronym
     display: CAD
     description: computer aided design
-    first: computer aided design (CAD) #default behaviour should be covered
+    # first: computer aided design (CAD) #default behaviour should be covered
 
   cpt:
     glstype: acronym
     display: CPT
     description: coreless planar transformer
-    first: # default
-    plural: CPTs # default?
-    descriptionplural: coreless planar transformers #default?
-    firstplural: #default??
+    #first: # default
+    # plural: CPTs # default?
+    # descriptionplural: coreless planar transformers #default?
+    #firstplural: #default??
 
   mfp:
     type: acronym
@@ -82,8 +82,7 @@ glossary:
     type: acronym
     display: CWVM
     description: Cockroft-Walton voltage multiplier
-    first: \glsentrydesc{cwvm} (\glsentrytext{cwvm})\glsadd{cwvmg}
-    plural: CWVMs
-    descriptionplural: Cockroft-Walton voltage multipliers
     descriptionExt: \glsentrydesc{cwvm} (\glsentrytext{cwvm}) is a voltage multiplier that can be cascaded to give an output voltage of \SI{n}{\vpp}
-
+    #first: \glsentrydesc{cwvm} (\glsentrytext{cwvm})\glsadd{cwvmg}
+    #plural: CWVMs
+    #descriptionplural: Cockroft-Walton voltage multipliers
