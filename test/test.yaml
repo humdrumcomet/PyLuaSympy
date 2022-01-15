@@ -44,7 +44,7 @@ equations:
     symbol: \rho
     units: \mega\watt
 
-gloss:
+glossary:
   cpp:
     glstype: glossary
     display: C++

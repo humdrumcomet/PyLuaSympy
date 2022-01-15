@@ -9,6 +9,7 @@ def yamlLoader(filePath, namespace=None):
 
     newVars = eqandvar.evDict()
     newEqts = eqandvar.evDict()
+    newAux = {}
 
     for k, v in mVandE.items():
         if k == 'variables':
@@ -17,7 +18,10 @@ def yamlLoader(filePath, namespace=None):
         elif k == 'equations':
             for k2, preProcDict in v.items():
                 newEqts[k2] = eqandvar.eqtClass(k2,newVars,newEqts,preProcDict)
+        elif k == 'glossary':
+            for k2, preProcDict in v.items():
+                newAux[k2] = preProcDict
+
 
     print(mVandE)
-    return newVars, newEqts
-
+    return newVars, newEqts, newAux

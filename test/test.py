@@ -2,9 +2,13 @@ import os
 import pyLuaSympy.helpers as lsh
 
 path = os.path.join(os.path.dirname(__file__), './test.yaml')
-var, eqt = lsh.yamlLoader(path)
+var, eqt, aux = lsh.yamlLoader(path)
 print(var)
+print('')
 print(eqt)
+print('')
+print(aux)
+print('')
 print(eqt['scndEq'])
 
 # print(aVar)
