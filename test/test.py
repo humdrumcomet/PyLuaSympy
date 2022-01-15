@@ -2,14 +2,15 @@ import os
 import pyLuaSympy.helpers as lsh
 
 path = os.path.join(os.path.dirname(__file__), './test.yaml')
-var, eqt = lsh.yamlLoader(path)
+var,eqt,aux = lsh.yamlLoader(path)
 print(var)
 print(eqt)
-print(eqt['scndEq'])
+print(aux)
+print(eqt.scndEq)
 
 # print(aVar)
 # print(scndEq)
-t = eqt['scndEq'].calc('t', x=1e3)
+t = eqt.scndEq.calc('t', x=1e3)
 print(t)
 # s = thrdEq.calc('s')
 # tex = scndEq.totex('t')
@@ -47,3 +48,83 @@ print(tex3)
     # specialExprOpts
 # )
 # qch.calc()
+
+# **** # """"""""""""""""""""""""""""""""""""""" """""""""""""""""""""""""""""""""""""""
+# glossary
+# \newglossaryentry{cpp}
+# {%
+#     name={C++},
+#     description={C++ is a programming language that can be used as an object oriented programming language, an imperative programming language, and still provide low-level memory control. Note: All C++ code used in this work is compiled under the C++11 standard}
+#  3 }
+# **** glossary with plural
+# \newglossaryentry{acdc}
+# {
+#     name={rectifier},
+#     description={a \glsentrytext{ac} to \glsentrytext{dc} voltage converter (\glsentrytext{acdc})},
+#     plural={rectifiers},
+#     descriptionplural={\glsentrytext{ac} to \glsentrytext{dc} voltage converters (\glsentrytext{acdc})}
+#   3 }
+# **** acronym
+# \newglossaryentry{cad}
+# {
+#     type=\acronymtype,
+#     name={CAD},
+#     description={computer aided design},
+#     first={\glsentrydesc{cad} (\glsentrytext{cad})}
+#   3 }
+# **** acronym with plural
+# \newglossaryentry{cpt}
+# {
+#     type=\acronymtype,
+#     name={CPT},
+#     description={coreless planar transformer},
+#     first={\glsentrydesc{cpt} (\glsentrytext{cpt})},
+#     plural={CPTs},
+#     descriptionplural={coreless planar transformers},
+#     firstplural={\glsentrydescplural{cpt} (\glsentryplural{cpt})}
+#   3 }
+# **** acronym with gloss ext
+# \newglossaryentry{mfpg}
+# {
+#     name={\glsentrytext{mfp}},
+#     description={\glsentrydesc{mfp} (\glsentrytext{mfp}) is the average distance travelled by particles between interactions}
+#   3 }
+# \newglossaryentry{mfp}
+# {
+#     type=\acronymtype,
+#     name={MFP},
+#     description={mean free path},
+#     first={\glsentrydesc{mfp} (\glsentrytext{mfp})\glsadd{mfpg}},
+#     see=[Glossary:]{mfpg}
+#   3 }
+# **** acronym with plural with gloss ext
+# \newglossaryentry{cwvmg}
+# {
+#     name={\glsentrytext{cwvm}},
+#     description={\glsentrydesc{cwvm} (\glsentrytext{cwvm}) is a voltage multiplier that can be cascaded to give an output voltage of \SI{n}{\vpp}}
+#   3 }
+# \newglossaryentry{cwvm}
+# {
+#     type=\acronymtype,
+#     name={CWVM},
+#     description={Cockroft-Walton voltage multiplier},
+#     first={\glsentrydesc{cwvm} (\glsentrytext{cwvm})\glsadd{cwvmg}},
+#     plural={CWVMs},
+#     descriptionplural={Cockroft-Walton voltage multipliers},
+#     firstplural={\glsentrydescplural{cwvm} (\glsentryplural{cwvm})},
+#     see=[Glossary:]{cwvmg}
+#   3 }
+# **** const
+# \newglossaryentry{h}
+# {
+#     type=constants,
+#     name={\ensuremath{h}},
+#     description={\mbox{} Planck constant (\SI{6.626070e-34}{\meter\tothe{2}\kilogram\per\second})}
+#   3 }
+# **** symb
+# \newglossaryentry{EB}
+# {
+#     type=symbols,
+#     name={\ensuremath{E_{B}}},
+#     description={nuclear binding energy (\si{\electronvolt})}
+#   3 }
