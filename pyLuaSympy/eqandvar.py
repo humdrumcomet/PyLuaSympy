@@ -26,11 +26,6 @@ class evDict(dict):
             if nameSpace:
                 nameSpace[k] = self[k]
 
-# class auxGls:
-#     def __init__(self, name, dfp):
-#         self.name = name
-#         self.display = dfp.get('display')
-#         self.description =
 
 class evClass:
     def __init__(self, name, dfp):
