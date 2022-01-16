@@ -63,11 +63,11 @@ def toGlossHeader(auxDict, varDict, eqtDict):
 
             partList.append( r'name={' +
                              v['display'] +
-                             r'},' )
+                             r'}, ' )
 
             partList.append( r'description={' +
                              v['description'] +
-                             r'}' )
+                             r'}, ' )
 
             partList.append( (('plural' in v) and
                               r'plural={' +
@@ -75,15 +75,15 @@ def toGlossHeader(auxDict, varDict, eqtDict):
                               r'},') or
                              r'plural={' +
                              v['display'] +
-                             r's},' )
+                             r's}, ' )
 
             partList.append( (('descriptionplural' in v) and
                               r'descriptionplural={' +
                               v['descriptionplural'] +
-                              r'},') or
+                              r'}, ') or
                              r'descriptionplural={' +
                              v['description'] +
-                             r's},' )
+                             r's}, ' )
 
             if v.get('glstype', '') == 'acronym':
                 # print(v['first'])
@@ -95,27 +95,27 @@ def toGlossHeader(auxDict, varDict, eqtDict):
                            k +
                            r'})')
 
-                acrGlg = ((glg and r'\glsadd{' + k + r'g}') or '') + r'},'
+                acrGlg = ((glg and r'\glsadd{' + k + r'g}') or '') + r'}, '
                 partList.append( acrPart + acrGlg )
                 partList.append( 'firstplural' in v and
                                  r'firstplural={' +
                                  v['firstplural'] +
                                  r'}' or
-                                 r'first={\glsentrydescplural{' +
+                                 r'firstplural={\glsentrydescplural{' +
                                  k +
                                  r'} (\glsentryplural{' +
                                  k +
-                                 r'})')
+                                 r'})}')
+            partList.append( r'} ' )
 
         elif getattr(v, 'description', False):
             partList.append(r'\newglossaryentry{' + k + r'}{type=')
             partList.append(glsType[v.glsType] + r', ')
-            partList.append(r'name={' + ((v.ensureMath and r'\ensuremath{' + v.name + r'}') or v.name ) + r'}, ')
+            partList.append(r'name={' + ((v.ensureMath and r'\ensuremath{' + v.symbol + r'}') or v.symbol ) + r'}, ')
             partList.append(r'description={' + v.description + r'}} ')
 
-        print(partList)
+        # print(partList)
         for i in partList:
-            glsString = glsString + i
+            glsString = glsString + i + '\n '
 
     return glsString
-# def eqtTexPrint(eqt):
