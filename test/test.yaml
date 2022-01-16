@@ -1,7 +1,7 @@
 variables:
   aVar:
     value: 5
-    display: \alpha_{\beta}
+    symbol: \alpha_{\beta}
     units: \hertz
     description: a different variable, but with a comma and (some brackets, commma){[(bllllu)]}
     glsType: symbol
@@ -20,7 +20,28 @@ variables:
     glsType: constant
     ensureMath: false
 
+  plank:
+    value: 6.626e-34
+    symbol: h
+    units:
+    description: Plank Constant
+    glsType: constant
+
+  pit:
+    value: 3.1415
+    symbol: \pi
+    description: pi
+    glsType: constant
+
 equations:
+  hbart:
+    expr: plank/(2*pit)
+    symbol: \hbar
+    units:
+    description: reduced Plank constant
+    lambdifyOpts: numpy
+    glsType: constant
+
   equation:
     expr: Integral(x**y)
 

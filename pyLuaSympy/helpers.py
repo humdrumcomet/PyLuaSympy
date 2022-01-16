@@ -45,77 +45,112 @@ def toGlossHeader(auxDict, varDict, eqtDict):
         if (type(v) is type(dict())) and v.get('description', False):
             glg = 'descriptionExt' in v
             partList.append( (glg and
-                             r'\newglossaryentry{' +
-                             k + r'g}{name={\glsentrytext{' +
-                             k + r'}}, description={' +
-                             v['descriptionExt'] + r'}}') or
+                             r'''\newglossaryentry{''' + k + r'''g}{name={\glsentrytext{''' + k + '''}},
+                             description={''' + v['descriptionExt'] + '''}
+                             }
+
+                             ''') or
                              '')
 
-            partList.append(r'\newglossaryentry{' +
-                            k +
-                            r'}{')
+            partList.append(r'''\newglossaryentry{''' + k + '''}{''')
 
             partList.append( (('glstype' in v) and
-                              r'type=' +
-                              glsType[v['glstype']] +
-                              r',' ) or
+                              '''type=''' + glsType[v['glstype']] + ''',
+                              ''' ) or
                              '')
 
-            partList.append( r'name={' +
-                             v['display'] +
-                             r'}, ' )
-
-            partList.append( r'description={' +
-                             v['description'] +
-                             r'}, ' )
+            partList.append( '''name={''' + v['display'] + '''},
+                             ''')
+            partList.append( '''description={''' + v['description'] + '''},
+                             ''' )
 
             partList.append( (('plural' in v) and
-                              r'plural={' +
-                              v['plural'] +
-                              r'},') or
-                             r'plural={' +
-                             v['display'] +
-                             r's}, ' )
+                              '''plural={''' + v['plural'] + '''},
+                              ''') or
+                             '''plural={''' + v['display'] + '''s},
+                             ''' )
 
             partList.append( (('descriptionplural' in v) and
-                              r'descriptionplural={' +
-                              v['descriptionplural'] +
-                              r'}, ') or
-                             r'descriptionplural={' +
-                             v['description'] +
-                             r's}, ' )
+                              '''descriptionplural={''' + v['descriptionplural'] + '''},
+                              ''') or
+                             '''descriptionplural={''' + v['description'] + '''s},
+                             ''' )
 
             if v.get('glstype', '') == 'acronym':
                 # print(v['first'])
                 acrPart = ((('first' in v) and
-                            r'first={' + v['first']) or
-                           r'first={\glsentrydesc{' +
-                           k +
-                           r'} (\glsentrytext{' +
-                           k +
-                           r'})')
+                            '''first={''' + v['first']) or
+                           r'''first={\glsentrydesc{''' + k + r'''} (\glsentrytext{''' + k + '''})''')
 
-                acrGlg = ((glg and r'\glsadd{' + k + r'g}') or '') + r'}, '
+                acrGlg = ((glg and
+                           r'''\glsadd{''' + k + '''g}''') or
+                          '') + '''},
+                          '''
                 partList.append( acrPart + acrGlg )
                 partList.append( 'firstplural' in v and
-                                 r'firstplural={' +
-                                 v['firstplural'] +
-                                 r'}' or
-                                 r'firstplural={\glsentrydescplural{' +
-                                 k +
-                                 r'} (\glsentryplural{' +
-                                 k +
-                                 r'})}')
-            partList.append( r'} ' )
+                                 '''firstplural={''' + v['firstplural'] + '''},
+                                 ''' or
+                                 r'''firstplural={\glsentrydescplural{''' + k + r'''} (\glsentryplural{''' + k + '''})},
+                                 ''')
+            partList.append( '''}
+                             ''' )
 
         elif getattr(v, 'description', False):
-            partList.append(r'\newglossaryentry{' + k + r'}{type=')
-            partList.append(glsType[v.glsType] + r', ')
-            partList.append(r'name={' + ((v.ensureMath and r'\ensuremath{' + v.symbol + r'}') or v.symbol ) + r'}, ')
-            partList.append(r'description={' + v.description + r'}} ')
+            partList.append(r'''\newglossaryentry{''' + k + '''}{type=''' + glsType[v.glsType] + ''',
+                            ''')
+            # print(k)
+            # print(v.symbol)
+            # print(v.ensureMath)
+            partList.append('''name={''' + ((v.ensureMath and r'''\ensuremath{''' + v.symbol + '''}''') or v.symbol ) + '''},
+                            ''')
+            partList.append('''description={''' + v.description + '''}}
+                            ''')
 
         # print(partList)
         for i in partList:
-            glsString = glsString + i + '\n '
+            glsString = glsString + i
 
-    return glsString
+        glsString = glsString + '''\n'''
+
+    return re.sub(' +', ' ', glsString)
+
+def equationOut(eqtDict, name, num=0, variant='', label=''):
+    label = label or name
+    eqtOut = ''
+    variant = variant
+    num = num
+    eqtList = eqtDict[name].totex()
+    if variant == 'all':
+        eqtOut = eqtOut + r'''
+        \begin{align}\label{eqt:''' + label + '''}
+        '''
+        for n, i in enumerate(eqtList[1]):
+            eqtOut = eqtOut + re.sub('=', r'&=', i)
+            if n < len(eqtList[1])-1:
+                eqtOut = eqtOut + r'''\nonumber\\
+                '''
+
+        eqtOut = eqtOut + r'''
+        \end{align}
+        '''
+
+    elif variant == 'inline':
+        eqtOut = eqtOut + r'''$''' + eqtList[num] + r'''$'''
+
+    else:
+        eqtOut = eqtOut + r'''
+        \begin{equation}\label{eqt:''' + label + '''}
+        ''' + eqtList[num] + r'''
+        \end{equation}
+        '''
+    # print(eqtOut)
+    return re.sub(' +', ' ', eqtOut)
+
+def dataToTable(name):
+    pass
+
+def dataToTikz(name):
+    pass
+
+def printValue(name):
+    pass

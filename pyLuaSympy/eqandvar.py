@@ -182,20 +182,20 @@ class eqtClass(evClass):
             texTemp = eqt
 
         if 'Integral' in self.expr:
-            texTemp, numIntChangedRemoved = re.subn(',\s*d', r',\mathrm{d}', texTemp)
+            texTemp, numIntChangedRemoved = re.subn(',\s*d', r''',\mathrm{d}''', texTemp)
 
         splitEqt = re.split(r'(\w*)', texTemp)
         symsList = []
         for idx, item in enumerate(splitEqt):
             if item in eqtDict:
                 if eqtDict[item].description:
-                    splitEqt[idx] = r'\gls{'+item+'}'
+                    splitEqt[idx] = r'''\gls{''' + item + r'''}'''
                 elif eqtDict[item].symbol:
                     splitEqt[idx] = eqtDict[item].symbol
 
             if item in varDict:
                 if varDict[item].description:
-                    splitEqt[idx] = r'\gls{'+item+'}'
+                    splitEqt[idx] = r'''\gls{''' + item + r'''}'''
                 elif varDict[item].symbol:
                     splitEqt[idx] = varDict[item].symbol
 
