@@ -4,11 +4,17 @@ import pyLuaSympy.helpers as lsh
 path = os.path.join(os.path.dirname(__file__), './test.yaml')
 var, eqt, aux = lsh.yamlLoader(path)
 # glsString =
+a = 12
 print(lsh.toGlossHeader(aux, var, eqt))
 print(lsh.equationOut(eqt, 'scndEq', 0, 'all', 'hbarfull'))
 print(lsh.equationOut(eqt, 'hbart', 0, 'inline'))
 print(lsh.equationOut(eqt, 'hbart'))
+print(lsh.printValue('c', var))
+print(lsh.printValue(a))
+print(lsh.printValue(a, symbol='\\alpha'))
+print(lsh.printValue(a, symbol='\\alpha', units='\\gram'))
 
+# printValue(name, inDict=locals(), decimalPlaces=3, units='', symbol=True): #val, name, decimalPlaces=3, units=True):
 # print(var)
 # print('')
 # print(eqt)

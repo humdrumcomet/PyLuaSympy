@@ -152,5 +152,13 @@ def dataToTable(name):
 def dataToTikz(name):
     pass
 
-def printValue(name):
-    pass
+# def printValue(val, name, decimalPlaces=3, units=True):
+def printValue(name, inDict={}, decimalPlaces=3, units='', symbol=True): #val, name, decimalPlaces=3, units=True):
+    value = getattr(inDict.get(name, False), 'val', False) or name
+    units = getattr(inDict.get(name, False), 'units', False) or units
+    inGls = getattr(inDict.get(name, False), 'glsType', False) and '\\gls{{{}}}' or '{}'
+    call = (symbol and getattr(inDict.get(name, False), 'symbol', False)) or (type(symbol) is type(str()) and symbol) or ''
+    symStr = call and ('$' + inGls.format(call) + ' = ') or ''
+    endStr = symStr and '$' or ''
+    valStr = ('{}\\SI{{{:.' + str(decimalPlaces) + 'E}}}{{{}}}{}').format(symStr, value, units, endStr)
+    return valStr
