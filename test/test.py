@@ -14,6 +14,8 @@ print(lsh.printValue(a))
 print(lsh.printValue(a, symbol='\\alpha'))
 print(lsh.printValue(a, symbol='\\alpha', units='\\gram'))
 
+t = eqt.scdnEg.lambd(x=4, aVar=2, )
+
 # printValue(name, inDict=locals(), decimalPlaces=3, units='', symbol=True): #val, name, decimalPlaces=3, units=True):
 # print(var)
 # print('')

@@ -83,7 +83,9 @@ def toGlossHeader(auxDict, varDict, eqtDict):
                            r'''first={\glsentrydesc{''' + k + r'''} (\glsentrytext{''' + k + '''})''')
 
                 acrGlg = ((glg and
-                           r'''\glsadd{''' + k + '''g}''') or
+                           r'''\glsadd{''' + k + r'''g}}, see=[Glossary:]{''' + k + '''g''') or
+
+
                           '') + '''},
                           '''
                 partList.append( acrPart + acrGlg )
