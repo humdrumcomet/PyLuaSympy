@@ -1,7 +1,9 @@
 import re
 from . import helpers
-from sympy import symbols, latex, sympify, Eq, lambdify, Function, solve
 from sympy.parsing.sympy_parser import parse_expr as parExp
+from sympy import symbols, latex, sympify, Eq, lambdify, Function, solve
+
+
 
 
 class evDict(dict):
@@ -28,32 +30,189 @@ class evDict(dict):
 
 
 class evClass:
-    def __init__(self, name, dfp):
-        self.name = name
-        self.symbol = dfp.get('symbol')
-        self.units = dfp.get('units')
-        self.glsType = dfp.get('glsType', 'sym')
-        self.description = dfp.get('description')
-        self.ensureMath = dfp.get('ensureMath', True) 
-
-class varClass(evClass):
-    def __init__(self, name, dfp):
-        evClass.__init__(self, name, dfp)
-        self.val = dfp.get('value') and float(dfp.get('value'))
-
-class eqtClass(evClass):
-    def __init__(self, name, vDict, eDict, dfp):
-        evClass.__init__(self, name, dfp)
-        self.eDict = eDict
-        self.vDict = vDict
-        self.expr = dfp.get('expr')
-        self.lambdOpts = dfp.get('lambdifyOpts', 'numpy')
-        self.texPrintOpts = dfp.get('texPrintOpts') and ', ' + dfp.get('texPrintOpts')
+    def __init__(self, **kwargs):
+        # self.eDict = eDict
+        # self.vDict = vDict
+        self.name = kwargs.get('name')
+        self.symbol = kwargs.get('symbol')
+        self.units = kwargs.get('units')
+        self.glsType = kwargs.get('glsType', 'sym')
+        self.description = kwargs.get('description')
+        self.ensureMath = kwargs.get('ensureMath', True)
+        self.value = kwargs.get('value') and float(kwargs.get('value'))
+        self.expr = kwargs.get('expr')
+        self.lambdOpts = kwargs.get('lambdifyOpts', 'numpy')
+        self.texPrintOpts = kwargs.get('texPrintOpts') and ', ' + kwargs.get('texPrintOpts')
         self.specialExprOpts = ''
         self.eqtType = 'equation'
         self.computeList = {}
-        self.delayExp = (dfp.get('delayExp') and re.split('\s*,\s*', dfp.get('delayExp'))) or []
-        self.noExp = (dfp.get('noExp') and re.split('\s*,\s*', dfp.get('noExp'))) or []
+        self.delayExp = (kwargs.get('delayExp') and re.split('\s*,\s*', kwargs.get('delayExp'))) or []
+        self.noExp = (kwargs.get('noExp') and re.split('\s*,\s*', kwargs.get('noExp'))) or []
+
+    def __abs__(self):
+        return abs(self.value)
+
+    def __add__(self, other):
+        return self.value + other
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        return self.value - other
+
+    def __rsub__(self, other):
+        return other - self.value
+
+    def __mul__(self, other):
+        return self.value * other
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        return self.value / other
+
+    def __rtruediv__(self, other):
+        return other / self.value
+
+    def __pow__(self, other):
+        return self.value ** other
+
+    def __rpow__(self, other):
+        return other ** self.value
+
+    def __mod__(self, other):
+        return self.value % other
+
+    def __rmod__(self, other):
+        return other % self.value
+
+    # def __bool__(self):
+    #     pass
+
+    # def __ceil__(self):
+    #     pass
+
+    # def __class__(self):
+    #     pass
+
+    # def __delattr__(self):
+    #     pass
+
+    # def __divmod__(self):
+    #     pass
+
+    # def __doc__(self):
+    #     pass
+
+    # def __eq__(self):
+    #     pass
+
+    # def __float__(self):
+    #     pass
+
+    # def __floor__(self):
+    #     pass
+
+    # def __floordiv__(self):
+    #     pass
+
+    # def __format__(self):
+    #     pass
+
+    # def __ge__(self):
+    #     pass
+
+    # def __getattribute__(self):
+    #     pass
+
+    # def __getformat__(self):
+    #     pass
+
+    # def __getnewargs__(self):
+    #     pass
+
+    # def __gt__(self):
+    #     pass
+
+    # def __hash__(self):
+    #     pass
+
+    # def __int__(self):
+    #     pass
+
+    # def __le__(self):
+    #     pass
+
+    # def __lt__(self):
+    #     pass
+
+    # def __ne__(self):
+    #     pass
+
+    # def __neg__(self):
+    #     pass
+
+    # def __new__(self):
+    #     pass
+
+    # def __pos__(self):
+    #     pass
+
+    # def __rfloordiv__(self):
+    #     pass
+
+    # def __rdivmod__(self):
+    #     pass
+
+    # def __reduce__(self):
+    #     pass
+
+    # def __reduce_ex__(self):
+    #     pass
+
+    # def __repr__(self):
+    #     pass
+
+    # def __round__(self):
+    #     pass
+    # def __set_format__(self):
+    #     pass
+
+    # def __setattr__(self):
+    #     pass
+
+    # def __sizeof__(self):
+    #     pass
+
+    # def __str__(self):
+    #     pass
+
+    # def __subclasshook__(self):
+    #     pass
+
+    # def __trunc__(self):
+    #     pass
+
+    # def as_integer_ratio(self):
+    #     pass
+
+    # def conjugate(self):
+    #     pass
+
+    # def fromhex(self):
+    #     pass
+
+    # def hex(self):
+    #     pass
+
+    # def imag(self):
+    #     pass
+
+    # def is_integer(self):
+    #     pass
+
+    # def real(self):
+    #     pass
 
     def calc(self, *args, **kwargs):
         name = kwargs.pop('name', None) or (args and args[0]) or str(len(self.computeList))
