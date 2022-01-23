@@ -132,19 +132,19 @@ def equationOut(eqtDict, name, num=0, variant='', label=''):
                 eqtOut = eqtOut + r'''\nonumber\\
                 '''
 
-        eqtOut = eqtOut + r'''
+        eqtOut = eqtOut + '''
         \end{align}
         '''
 
     elif variant == 'inline':
-        eqtOut = eqtOut + r'''$''' + eqtList[num] + r'''$'''
+        eqtOut = eqtOut + '''${}$'''.format(eqtList[num])
 
     else:
-        eqtOut = eqtOut + r'''
-        \begin{equation}\label{eqt:''' + label + '''}
-        ''' + eqtList[num] + r'''
-        \end{equation}
-        '''
+        eqtOut = eqtOut + '''
+        \\begin{{equation}}\\label{{eqt:{}}}
+        {}
+        \end{{equation}}
+        '''.format(label, eqtList[num])
     # print(eqtOut)
     return re.sub(' +', ' ', eqtOut)
 
@@ -156,10 +156,10 @@ def dataToTikz(name):
 
 # def printValue(val, name, decimalPlaces=3, units=True):
 def printValue(name, inDict={}, decimalPlaces=3, units='', symbol=True): #val, name, decimalPlaces=3, units=True):
-    value = getattr(inDict.get(name, False), 'val', False) or name
+    value = getattr(inDict.get(name, False), 'val', False) or globals()[name]
     units = getattr(inDict.get(name, False), 'units', False) or units
     inGls = getattr(inDict.get(name, False), 'glsType', False) and '\\gls{{{}}}' or '{}'
-    call = (symbol and getattr(inDict.get(name, False), 'symbol', False)) or (type(symbol) is type(str()) and symbol) or ''
+    call = (symbol and getattr(inDict.get(name, False), 'name', False)) or (type(symbol) is type(str()) and symbol) or ''
     symStr = call and ('$' + inGls.format(call) + ' = ') or ''
     endStr = symStr and '$' or ''
     valStr = ('{}\\SI{{{:.' + str(decimalPlaces) + 'E}}}{{{}}}{}').format(symStr, value, units, endStr)
