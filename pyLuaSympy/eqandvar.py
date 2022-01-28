@@ -1,4 +1,5 @@
 import re
+import pint
 from . import helpers
 from sympy import symbols, latex, sympify, Eq, lambdify, Function, solve
 from sympy.parsing.sympy_parser import parse_expr as parExp
@@ -41,9 +42,12 @@ class varClass(evClass):
         evClass.__init__(self, name, dfp)
         self.val = dfp.get('value') and float(dfp.get('value'))
 
+    # Boolean Operations
     def __eq__(self, other):
         # Define equality
+        # if type(other) == type(self):
         pass
+
 
     def __ne__(self, other):
         # define inequality
@@ -65,6 +69,7 @@ class varClass(evClass):
         # define greater-than-or-equal
         pass
 
+    # Convert to equation Class, return an eqt
     def __pos__(self):
         # implement unary positive
         pass
@@ -133,26 +138,6 @@ class varClass(evClass):
         # Implements behavior for exponents using the ** operator.
         pass
 
-    def __lshift__(self, other):
-        # Implements left bitwise shift using the << operator.
-        pass
-
-    def __rshift__(self, other):
-        # Implements right bitwise shift using the >> operator.
-        pass
-
-    def __and__(self, other):
-        # Implements bitwise and using the & operator.
-        pass
-
-    def __or__(self, other):
-        # Implements bitwise or using the | operator.
-        pass
-
-    def __xor__(self, other):
-        # Implements bitwise xor using the ^ operator.
-        pass
-
     def __radd__(self, other):
         # Implements reflected addition.
         pass
@@ -189,6 +174,58 @@ class varClass(evClass):
         # Implements behavior for reflected exponents using the ** operator.
         pass
 
+    def __iadd__(self, other):
+        # Implements addition with assignment.
+        pass
+
+    def __isub__(self, other):
+        # Implements subtraction with assignment.
+        pass
+
+    def __imul__(self, other):
+        # Implements multiplication with assignment.
+        pass
+
+    def __ifloordiv__(self, other):
+        # Implements integer division with assignment using the //= operator.
+        pass
+
+    def __idiv__(self, other):
+        # Implements division with assignment using the /= operator.
+        pass
+
+    def __itruediv__(self, other):
+        # Implements true division with assignment. Note that this only works when from __future__ import division is in effect.
+        pass
+
+    def __imod__(self, other):
+        # Implements modulo with assignment using the %= operator.
+        pass
+
+    def __ipow__(self, other):
+        # Implements behavior for exponents with assignment using the **= operator.
+        pass
+
+    def __lshift__(self, other):
+        # Implements left bitwise shift using the << operator.
+        pass
+
+    def __rshift__(self, other):
+        # Implements right bitwise shift using the >> operator.
+        pass
+
+    def __and__(self, other):
+        # Implements bitwise and using the & operator.
+        pass
+
+    def __or__(self, other):
+        # Implements bitwise or using the | operator.
+        pass
+
+    def __xor__(self, other):
+        # Implements bitwise xor using the ^ operator.
+        pass
+
     def __rlshift__(self, other):
         # Implements reflected left bitwise shift using the << operator.
         pass
@@ -207,6 +244,26 @@ class varClass(evClass):
 
     def __rxor__(self, other):
         # Implements reflected bitwise xor using the ^ operator.
+        pass
+
+    def __ilshift__(self, other):
+        # Implements left bitwise shift with assignment using the <<= operator.
+        pass
+
+    def __irshift__(self, other):
+        # Implements right bitwise shift with assignment using the >>= operator.
+        pass
+
+    def __iand__(self, other):
+        # Implements bitwise and with assignment using the &= operator.
+        pass
+
+    def __ior__(self, other):
+        # Implements bitwise or with assignment using the |= operator.
+        pass
+
+    def __ixor__(self, other):
+        # Implements bitwise xor with assignment using the ^= operator.
         pass
 
     def __int__(self):
@@ -243,58 +300,6 @@ class varClass(evClass):
 
     def __coerce__(self, other):
         #
-        pass
-
-    def __iadd__(self, other):
-        # Implements addition with assignment.
-        pass
-
-    def __isub__(self, other):
-        # Implements subtraction with assignment.
-        pass
-
-    def __imul__(self, other):
-        # Implements multiplication with assignment.
-        pass
-
-    def __ifloordiv__(self, other):
-        # Implements integer division with assignment using the //= operator.
-        pass
-
-    def __idiv__(self, other):
-        # Implements division with assignment using the /= operator.
-        pass
-
-    def __itruediv__(self, other):
-        # Implements true division with assignment. Note that this only works when from __future__ import division is in effect.
-        pass
-
-    def __imod__(self, other):
-        # Implements modulo with assignment using the %= operator.
-        pass
-
-    def __ipow__(self, other):
-        # Implements behavior for exponents with assignment using the **= operator.
-        pass
-
-    def __ilshift__(self, other):
-        # Implements left bitwise shift with assignment using the <<= operator.
-        pass
-
-    def __irshift__(self, other):
-        # Implements right bitwise shift with assignment using the >>= operator.
-        pass
-
-    def __iand__(self, other):
-        # Implements bitwise and with assignment using the &= operator.
-        pass
-
-    def __ior__(self, other):
-        # Implements bitwise or with assignment using the |= operator.
-        pass
-
-    def __ixor__(self, other):
-        # Implements bitwise xor with assignment using the ^= operator.
         pass
 
     def __str__(self):
