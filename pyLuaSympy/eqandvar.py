@@ -1,4 +1,5 @@
 import re
+import math
 import pint
 from . import helpers
 from sympy import symbols, latex, sympify, Eq, lambdify, Function, solve
@@ -35,51 +36,78 @@ class evClass:
         self.units = dfp.get('units')
         self.glsType = dfp.get('glsType', 'sym')
         self.description = dfp.get('description')
-        self.ensureMath = dfp.get('ensureMath', True) 
+        self.ensureMath = dfp.get('ensureMath', True)
+        self.value = dfp.get('value') and float(dfp.get('value'))
 
 class varClass(evClass):
     def __init__(self, name, dfp):
         evClass.__init__(self, name, dfp)
-        self.val = dfp.get('value') and float(dfp.get('value'))
 
     # Boolean Operations
     def __eq__(self, other):
         # Define equality
-        # if type(other) == type(self):
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        else:
+            return False
 
 
     def __ne__(self, other):
-        # define inequality
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        else:
+            return True
 
     def __lt__(self, other):
-        # define less-than
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        #elif nounits # situation where var has no units
+        else:
+            raise Exception("Can't compare variable with units against values with no units")
 
     def __gt__(self, other):
-        # define greater-than
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        #elif nounits # situation where var has no units
+        else:
+            raise Exception("Can't compare variable with units against values with no units")
 
     def __le__(self, other):
         # define less-than-or-equal
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        #elif nounits # situation where var has no units
+        else:
+            raise Exception("Can't compare variable with units against values with no units")
 
     def __ge__(self, other):
         # define greater-than-or-equal
-        pass
+        if type(other) == type(self):
+            # have to implement handeling for units
+            pass
+        #elif nounits # situation where var has no units
+        else:
+            raise Exception("Can't compare variable with units against values with no units")
 
     # Convert to equation Class, return an eqt
     def __pos__(self):
         # implement unary positive
-        pass
+        # Should return an equation with the
+        return self.__setattr__('value', +self.value)
 
     def __neg__(self):
         # implement negation
+        # return an new equation, that is -var
         pass
 
     def __abs__(self):
         # implement the abs function (absolute value)
+        # return an new equation, that is -var
         pass
 
     def __invert__(self):
@@ -88,19 +116,21 @@ class varClass(evClass):
 
     def __round__(self, n):
         # round to n decimal places (default 0)
-        pass
+        return self.__setattr__('value', round(self.value, n))
 
     def __floor__(self):
         # round down to nearest integer
-        pass
+        return self.__setattr__('value', math.floor(self.value, n))
 
     def __ceil__(self):
         # round up to nearest integer
-        pass
+        return self.__setattr__('value', math.ceil(self.value, n))
+        # pass
 
     def __trunc__(self):
         # truncate decimal places
-        pass
+        return self.__setattr__('value', math.ceil(self.value))
+        # pass
 
     def __add__(self, other):
         # Implements addition.
